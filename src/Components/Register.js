@@ -26,16 +26,16 @@ class Register extends Component {
           <div className='box-panel'>
             <Form>
               <Form.Item>
-                <Input onChange={this.props.handleChange.bind(this)} name='fristname' value={this.props.fristname} prefix={<Icon type='user' style={{ color: 'rgba(0,0,0,.25)' }} />} type='text' placeholder='Fristname' />
+                <Input onChange={this.props.handleChange.bind(this)} name='fristname' value={this.props.fristname} prefix={<Icon type='user' />} type='text' placeholder='Fristname' />
               </Form.Item>
               <Form.Item>
-                <Input onChange={this.props.handleChange.bind(this)} name='lastname' value={this.props.lastname} prefix={<Icon type='user' style={{ color: 'rgba(0,0,0,.25)' }} />} type='text' placeholder='Lastname' />
+                <Input onChange={this.props.handleChange.bind(this)} name='lastname' value={this.props.lastname} prefix={<Icon type='user' />} type='text' placeholder='Lastname' />
               </Form.Item>
               <Form.Item>
-                <Input onChange={this.props.handleChange.bind(this)} name='username' value={this.props.username} prefix={<Icon type='user' style={{ color: 'rgba(0,0,0,.25)' }} />} type='text' placeholder='Username' />
+                <Input onChange={this.props.handleChange.bind(this)} name='username' value={this.props.username} prefix={<Icon type='user' />} type='text' placeholder='Username' />
               </Form.Item>
               <Form.Item>
-                <Input onChange={this.props.handleChange.bind(this)} name='password' value={this.props.password} prefix={<Icon type='lock' style={{ color: 'rgba(0,0,0,.25)' }} />} type='password' placeholder='Password' />
+                <Input onChange={this.props.handleChange.bind(this)} name='password' value={this.props.password} prefix={<Icon type='lock' />} type='password' placeholder='Password' />
               </Form.Item>
               <Form.Item>
                 <Button onClick={this.onRegister.bind(this)} type='primary' ghost block>

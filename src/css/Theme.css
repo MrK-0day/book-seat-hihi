@@ -16,6 +16,22 @@
   .box-panel {
     min-width: 250px;
   }
+  .box-body {
+    margin-top: 10px;
+    margin-left: 8px;
+    margin-right: 8px;
+    text-align: center;
+  }
+  .box-input {
+    padding-left: 2px;
+    padding-right: 2px;
+  }
+  .box-line {
+    height: 5px;
+  }
+  .box-seat {
+    background-color: red;
+  }
 }
 
 /* For Desktop */
