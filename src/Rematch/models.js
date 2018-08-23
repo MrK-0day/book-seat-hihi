@@ -1,5 +1,6 @@
-import gql from 'graphql-tag'
-import * as hihi from '../Components/Apollo'
+// import gql from 'graphql-tag'
+// import * as hihi from '../Components/Apollo'
+// import { notify } from 'react-notify-toast'
 export const root = {
   state: {
     username: '',
@@ -16,5 +17,10 @@ export const root = {
     }
   },
   effects: (dispatch) => ({
+    async onLogin (payload, rootState) {
+      payload.replace('/register')
+    },
+    async onRegister (payload, rootState) {
+    }
   })
 }
