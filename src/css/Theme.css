@@ -18,8 +18,8 @@
   }
   .box-body {
     margin-top: 10px;
-    margin-left: 8px;
-    margin-right: 8px;
+    /* margin-left: 8px;
+    margin-right: 8px; */
     text-align: center;
   }
   .box-input {

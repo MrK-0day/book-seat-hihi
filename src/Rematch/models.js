@@ -1,5 +1,5 @@
-// import gql from 'graphql-tag'
-// import * as hihi from '../Components/Apollo'
+import gql from 'graphql-tag'
+import * as hihi from '../Components/Apollo'
 // import { notify } from 'react-notify-toast'
 export const root = {
   state: {
@@ -12,7 +12,8 @@ export const root = {
     roomname: '',
     width: 8,
     length: 10,
-    map: []
+    map: [],
+    listroom: []
   },
   reducers: {
     handleChange (state, e) {
@@ -77,13 +78,87 @@ export const root = {
         ...state,
         map: log
       }
+    },
+    setListRoom (state, payload) {
+      return {
+        ...state,
+        listroom: payload
+      }
     }
   },
   effects: (dispatch) => ({
     async onLogin (payload, rootState) {
+      // hihi.Client.mutate({
+      //   variables: {
+      //     name: rootState.root.username,
+      //     password: rootState.root.password,
+      //     firstname: rootState.root.firstname,
+      //     lastname: rootState.root.lastname,
+      //     isEnabled: true
+      //   },
+      //   mutation: gql`
+      //     mutation addUser ($name: String!, $password: String, $imageUrl: String, $firstname: String, $lastname: String, $isEnabled: Boolean!) {
+      //       addUser (name: $name, password: $password, imageUrl: $imageUrl, firstname: $firstname, lastname: $lastname, isEnabled: $isEnabled) {
+      //         _id
+      //       }
+      //     }
+      //   `
+      // }).then((result) => {
+      //   console.log(result)
+      // })
       payload.replace('/admin')
     },
     async onRegister (payload, rootState) {
+    },
+    async onComplete (payload, rootState) {
+      let listseat = []
+      for (let i = 0; i < rootState.root.length; i++) {
+        for (let j = 0; j < rootState.root.width; j++) {
+          if (rootState.root.map[i][j].color !== '#3498db') {
+            listseat.push({
+              x: i,
+              y: j
+            })
+          }
+        }
+      }
+      // add room
+      hihi.Client.mutate({
+        variables: {
+          code: `lol`,
+          name: rootState.root.roomname,
+          width: rootState.root.width,
+          length: rootState.root.length,
+          isEnabled: true
+        },
+        mutation: gql`
+          mutation addRoom ($code: String!, $name: String, $width: Int!, $length: Int!, $isEnabled: Boolean!) {
+            addRoom (code: $code, name: $name, width: $width, length: $length, isEnabled: $isEnabled) {
+              _id
+            }
+          }
+        `
+      }).then(result => {
+        console.log(result)
+      })
+    },
+    async getListroom (payload, rootState) {
+      let lr = []
+      await hihi.Client.query({
+        query: gql`
+          {
+            getRooms {
+              name
+            }
+          }
+        `
+      }).then(function (result) {
+        lr = result.data.getRooms
+      })
+      let log = lr.map(v => {
+        return v.name
+      })
+      dispatch.root.setListRoom(log)
     }
   })
 }

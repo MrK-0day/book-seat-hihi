@@ -3,7 +3,7 @@ import { withCookies } from 'react-cookie'
 import { connect } from 'react-redux'
 import Notifications from 'react-notify-toast'
 
-import Menux from './Children/Menu'
+import Menux from './Children/Menux'
 import DataSettingRooms from './Children/DataSettingRooms'
 
 class Admin extends Component {

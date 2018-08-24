@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import PropTypes from 'prop-types'
 import { withCookies } from 'react-cookie'
 import { connect } from 'react-redux'
 import { Col, Input, Button, Icon, Row, Select } from 'antd'
@@ -8,6 +7,9 @@ class DataSettingRooms extends Component {
   constructor (props) {
     super(props)
     this.state = {}
+  }
+  componentDidMount () {
+    this.props.getListroom()
   }
   render () {
     return (
@@ -45,10 +47,10 @@ class DataSettingRooms extends Component {
         <div className='box-line' />
         <Row type='flex'>
           <Col className='box-input' span={18}>
-            <Select style={{minWidth: '100%'}} defaultValue='Room 1'>
-              <Select.Option key='0' value='Room 1'>Room 1</Select.Option>
-              <Select.Option key='1' value='Room 2'>Room 2</Select.Option>
-              <Select.Option key='2' value='Room 3'>Room 3</Select.Option>
+            <Select style={{minWidth: '100%'}} defaultValue={this.props.listroom[0]}>
+              {this.props.listroom.map((v, i) => {
+                return (<Select.Option key={i} value={v}>{v}</Select.Option>)
+              })}
             </Select>
           </Col>
           <Col className='box-input' span={6}>
@@ -60,23 +62,30 @@ class DataSettingRooms extends Component {
           <div>
             {this.props.map.map((r, i) => {
               return (
-                <Row key={i} type='flex'>
+                <div key={i} style={{
+                  width: '100vw',
+                  height: Math.floor(100 / this.props.width) + 'vw',
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'center'
+                  // alignItems: 'center'
+                }}>
                   {r.map((c, j) => {
                     return (
-                      <Col onClick={this.props.handleClickSeat.bind(this)} style={{
+                      <div onClick={this.props.handleClickSeat.bind(this)} key={j} style={{
+                        width: Math.floor(100 / this.props.width) + '%',
                         backgroundColor: c.color,
-                        height: 50,
                         borderStyle: 'solid',
                         borderColor: '#ecf0f1',
                         borderWidth: 1
-                      }} id={`${i}-${j}`} key={j} span={3} />
+                      }} id={`${i}-${j}`} />
                     )
                   })}
-                </Row>
+                </div>
               )
             })}
             <div className='box-line' />
-            <Button style={{float: 'right'}} type='primary' ghost>Complete</Button>
+            <Button className='box-input' onClick={this.props.onComplete.bind(this)} style={{float: 'right'}} type='primary' ghost>Complete</Button>
           </div>
         )}
       </div>

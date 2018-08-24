@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
-import PropTypes from 'prop-types'
 import { withCookies } from 'react-cookie'
 import { connect } from 'react-redux'
-import { Menu, Icon } from 'antd'
+import { Menu, Icon, Affix } from 'antd'
 import { NavLink } from 'react-router-dom'
 
 class Menux extends Component {
@@ -13,7 +12,7 @@ class Menux extends Component {
   }
   render () {
     return (
-      <div>
+      <Affix>
         <Menu mode='horizontal' selectedKeys={[this.props.current]} onClick={this.props.handleClickMenu.bind(this)}>
           <Menu.Item key='settingrooms'>
             <Icon type='setting' />Setting Rooms
@@ -25,7 +24,7 @@ class Menux extends Component {
             <NavLink to='/'><Icon type='logout' />Logout</NavLink>
           </Menu.Item>
         </Menu>
-      </div>
+      </Affix>
     )
   }
 }

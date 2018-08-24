@@ -11,6 +11,7 @@ import '../css/Theme.css'
 import Home from './Home'
 import Register from './Register'
 import Admin from './Admin'
+import DHS from './DHS'
 
 library.add(faUserPlus, faSignInAlt, faHome, faCalendarAlt, faListUl)
 
@@ -22,6 +23,7 @@ class Router extends Component {
           <Route exact path='/' component={Home} />
           <Route exact path='/register' component={Register} />
           <Route exact path='/admin' component={Admin} />
+          <Route exact path='/DHS' component={DHS} />
         </Switch>
       </BrowserRouter>
     )
