@@ -8,19 +8,18 @@ class Menuy extends Component {
   constructor (props) {
     super(props)
     this.state = {}
-    props.resetLogin('settingrooms')
+    props.resetLogin('bookseat')
   }
   render () {
     return (
       <Affix>
         <Menu mode='horizontal' selectedKeys={[this.props.current]} onClick={this.props.handleClickMenu.bind(this)}>
-          <Menu.Item key='settingrooms'>
-            <Icon type='setting' />Setting Rooms
+          <Menu.Item key='bookseat'>
+            <Icon type='home' />Book Seat
           </Menu.Item>
-          <Menu.Item key='schedule'>
-            <Icon type='area-chart' />Schedule
-          </Menu.Item>
-          <Menu.Item key='logout'>
+          <Menu.Item style={{
+            float: 'right'
+          }} key='logout'>
             <NavLink to='/'><Icon type='logout' />Logout</NavLink>
           </Menu.Item>
         </Menu>

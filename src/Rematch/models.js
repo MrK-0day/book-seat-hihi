@@ -13,7 +13,8 @@ export const root = {
     width: 8,
     length: 10,
     map: [],
-    listroom: []
+    listroom: [],
+    pickroom: ''
   },
   reducers: {
     handleChange (state, e) {
@@ -106,7 +107,7 @@ export const root = {
       // }).then((result) => {
       //   console.log(result)
       // })
-      payload.replace('/admin')
+      payload.replace('/DHS')
     },
     async onRegister (payload, rootState) {
     },

@@ -2,10 +2,9 @@ import React, { Component } from 'react'
 import { withCookies } from 'react-cookie'
 import { connect } from 'react-redux'
 import Notifications from 'react-notify-toast'
-import { Subscription } from 'react-apollo'
-import gql from 'graphql-tag'
 
 import Menuy from './Children/Menuy'
+import BookSeat from './Children/BookSeat'
 
 class DHS extends Component {
   constructor (props) {
@@ -16,24 +15,7 @@ class DHS extends Component {
     return (
       <div>
         <Menuy />
-        <Subscription subscription={gql`
-          subscription Schedule {
-            scheduleUpdate {
-              _id roomId seatId userId timestamp
-              room {
-                code
-              }
-              seat {
-                code
-              }
-            }
-          }
-        `}>
-          {(data) => {
-            console.log(data)
-            return <div>1</div>
-          }}
-        </Subscription>
+        {this.props.current === 'bookseat' && (<BookSeat />)}
         <Notifications />
       </div>
     )

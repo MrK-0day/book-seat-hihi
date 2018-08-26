@@ -68,7 +68,6 @@ class DataSettingRooms extends Component {
                   display: 'flex',
                   flexDirection: 'row',
                   justifyContent: 'center'
-                  // alignItems: 'center'
                 }}>
                   {r.map((c, j) => {
                     return (

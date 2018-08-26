@@ -20,7 +20,9 @@ class Menux extends Component {
           <Menu.Item key='schedule'>
             <Icon type='area-chart' />Schedule
           </Menu.Item>
-          <Menu.Item key='logout'>
+          <Menu.Item style={{
+            float: 'right'
+          }} key='logout'>
             <NavLink to='/'><Icon type='logout' />Logout</NavLink>
           </Menu.Item>
         </Menu>
