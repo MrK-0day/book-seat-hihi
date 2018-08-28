@@ -14,9 +14,17 @@ export const root = {
     length: 10,
     map: [],
     listroom: [],
-    pickroom: ''
+    pickroom: '',
+    pickdate: '',
+    picktime: ''
   },
   reducers: {
+    handleChangeCustom (state, key, value) {
+      return {
+        ...state,
+        [key]: value
+      }
+    },
     handleChange (state, e) {
       return {
         ...state,
@@ -108,23 +116,13 @@ export const root = {
       //   console.log(result)
       // })
       payload.replace('/DHS')
+      // payload.replace('/admin')
     },
     async onRegister (payload, rootState) {
     },
     async onComplete (payload, rootState) {
-      let listseat = []
-      for (let i = 0; i < rootState.root.length; i++) {
-        for (let j = 0; j < rootState.root.width; j++) {
-          if (rootState.root.map[i][j].color !== '#3498db') {
-            listseat.push({
-              x: i,
-              y: j
-            })
-          }
-        }
-      }
       // add room
-      hihi.Client.mutate({
+      await hihi.Client.mutate({
         variables: {
           code: `lol`,
           name: rootState.root.roomname,
@@ -135,12 +133,40 @@ export const root = {
         mutation: gql`
           mutation addRoom ($code: String!, $name: String, $width: Int!, $length: Int!, $isEnabled: Boolean!) {
             addRoom (code: $code, name: $name, width: $width, length: $length, isEnabled: $isEnabled) {
-              _id
+              _id code name
             }
           }
         `
-      }).then(result => {
-        console.log(result)
+      }).then(function (result) {
+        let tmp = [...rootState.root.listroom]
+        tmp.push(result.data.addRoom.name)
+        dispatch.root.setListRoom(tmp)
+
+        let id = result.data.addRoom._id
+        let code = result.data.addRoom.code
+        for (let i = 0; i < rootState.root.length; i++) {
+          for (let j = 0; j < rootState.root.width; j++) {
+            if (rootState.root.map[i][j].color !== '#3498db') {
+              hihi.Client.mutate({
+                variables: {
+                  code: `${code}_s_${i}_${j}`,
+                  x: i,
+                  y: j,
+                  isEnabled: true,
+                  state: rootState.root.map[i][j].color === '#2ecc71' ? 1 : 2,
+                  roomId: id
+                },
+                mutation: gql`
+                  mutation addSeat ($code: String!, $x: Int!, $y: Int!, $state: Int, $isEnabled: Boolean!, $roomId: String!) {
+                    addSeat (code: $code, x: $x, y: $y, state: $state, isEnabled: $isEnabled, roomId: $roomId) {
+                      code _id
+                    }
+                  }
+                `
+              })
+            }
+          }
+        }
       })
     },
     async getListroom (payload, rootState) {
@@ -160,6 +186,49 @@ export const root = {
         return v.name
       })
       dispatch.root.setListRoom(log)
+    },
+    async getRooms (payload, rootState) {
+      await hihi.Client.query({
+        query: gql`
+          {
+            getRooms {
+              name width length
+              seats {
+                x y isEnabled state
+              }
+            }
+          }
+        `
+      }).then(function (result) {
+        let log = {}
+        for (let v of result.data.getRooms) {
+          if (v.name === rootState.root.pickroom) log = v
+        }
+        dispatch.root.handleChangeCustom('width', log.width)
+        dispatch.root.handleChangeCustom('length', log.length)
+        let cc = []
+        for (let i = 0; i < log.length; i++) {
+          let row = []
+          for (let j = 0; j < log.width; j++) {
+            row.push({
+              color: '#3498db'
+            })
+          }
+          cc.push(row)
+        }
+        for (let v of log.seats) {
+          cc[v.x][v.y].color = v.state === 1 ? '#2ecc71' : '#e74c3c'
+        }
+        dispatch.root.handleChangeCustom('map', cc)
+      })
+    },
+    async PickAM (payload, rootState) {
+      console.log(payload)
+      dispatch.root.handleChangeCustom('picktime', 'AM')
+    },
+    async PickPM (payload, rootState) {
+      console.log(payload)
+      dispatch.root.handleChangeCustom('picktime', 'PM')
     }
   })
 }
