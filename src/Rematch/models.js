@@ -93,6 +93,14 @@ export const root = {
         ...state,
         listroom: payload
       }
+    },
+    setColor (state, pos, color) {
+      let log = [...state.map]
+      log[pos.x][pos.y].color = color
+      return {
+        ...state,
+        map: log
+      }
     }
   },
   effects: (dispatch) => ({
@@ -194,7 +202,7 @@ export const root = {
             getRooms {
               name width length
               seats {
-                x y isEnabled state
+                x y isEnabled state _id
               }
             }
           }
@@ -211,24 +219,78 @@ export const root = {
           let row = []
           for (let j = 0; j < log.width; j++) {
             row.push({
-              color: '#3498db'
+              color: '#3498db',
+              id: ''
             })
           }
           cc.push(row)
         }
         for (let v of log.seats) {
           cc[v.x][v.y].color = v.state === 1 ? '#2ecc71' : '#e74c3c'
+          cc[v.x][v.y].id = v._id
         }
         dispatch.root.handleChangeCustom('map', cc)
       })
     },
-    async PickAM (payload, rootState) {
-      console.log(payload)
-      dispatch.root.handleChangeCustom('picktime', 'AM')
+    async PickSeat (payload, rootState) {
+      await hihi.Client.mutate({
+        variables: {
+          seatId: payload.split('|')[1],
+          userId: 'tuan',
+          timestamp: 123456
+        },
+        mutation: gql`
+          mutation addSchedule ($seatId: String!, $userId: String!, $timestamp: Int!) {
+            addSchedule (seatId: $seatId, userId: $userId, timestamp: $timestamp) {
+              _id timestamp
+              room {
+                name
+              }
+              user {
+                name
+              }
+              seat {
+                x y state
+              }
+            }
+          }
+        `
+      }).then(function (result) {
+        // console.log(result)
+        let data = result.data.addSchedule
+        console.log(result.data.addSchedule)
+        dispatch.root.setColor({x: data.seat.x, y: data.seat.y}, '#e67e22')
+      })
     },
-    async PickPM (payload, rootState) {
-      console.log(payload)
-      dispatch.root.handleChangeCustom('picktime', 'PM')
+    async AsnycRoom (payload, rootState) {
+      await hihi.Client.query({
+        query: gql`
+          {
+            getSchedules {
+              _id timestamp
+              room {
+                name
+              }
+              user {
+                _id name
+              }
+              seat {
+                x y state
+              }
+            }
+          }
+        `
+      }).then(function (result) {
+        let data = result.data.getSchedules
+        for (let v of data) {
+          console.log(v)
+          if (v.room.name === rootState.root.pickroom) {
+            let cc = [...rootState.root.map]
+            cc[v.seat.x][v.seat.y].color = '#e67e22'
+            dispatch.root.handleChangeCustom('map', cc)
+          }
+        }
+      })
     }
   })
 }

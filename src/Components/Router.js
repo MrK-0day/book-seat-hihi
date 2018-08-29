@@ -6,6 +6,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faUserPlus, faSignInAlt, faHome, faCalendarAlt, faListUl } from '@fortawesome/free-solid-svg-icons'
 
 import '../css/Theme.css'
+import 'semantic-ui-css/semantic.min.css'
 
 // Import Components
 import Home from './Home'
