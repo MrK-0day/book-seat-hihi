@@ -1,5 +1,6 @@
 import gql from 'graphql-tag'
 import * as hihi from '../Components/Apollo'
+const moment = require('moment')
 // import { notify } from 'react-notify-toast'
 export const root = {
   state: {
@@ -97,6 +98,22 @@ export const root = {
     setColor (state, pos, color) {
       let log = [...state.map]
       log[pos.x][pos.y].color = color
+      return {
+        ...state,
+        map: log
+      }
+    },
+    setTimestamp (state, pos, time) {
+      let log = [...state.map]
+      log[pos.x][pos.y].timestamp = time
+      return {
+        ...state,
+        map: log
+      }
+    },
+    setIdSchedule (state, pos, _id) {
+      let log = [...state.map]
+      log[pos.x][pos.y].idschedule = _id
       return {
         ...state,
         map: log
@@ -220,7 +237,9 @@ export const root = {
           for (let j = 0; j < log.width; j++) {
             row.push({
               color: '#3498db',
-              id: ''
+              id: '',
+              timestamp: '',
+              idschedule: ''
             })
           }
           cc.push(row)
@@ -233,11 +252,38 @@ export const root = {
       })
     },
     async PickSeat (payload, rootState) {
+      let date = rootState.root.pickdate.split('-')
+      let c = null
+      if (payload.split('|')[2] === 'AM') {
+        c = moment().set({
+          'date': +date[0],
+          'month': +date[1] - 1,
+          'year': +date[2],
+          'hour': 8,
+          'minute': 30
+        })
+      } else if (payload.split('|')[2] === 'PM') {
+        c = moment().set({
+          'date': +date[0],
+          'month': +date[1] - 1,
+          'year': +date[2],
+          'hour': 13,
+          'minute': 30
+        })
+      } else {
+        c = moment().set({
+          'date': +date[0],
+          'month': +date[1] - 1,
+          'year': +date[2],
+          'hour': 17,
+          'minute': 30
+        })
+      }
       await hihi.Client.mutate({
         variables: {
           seatId: payload.split('|')[1],
           userId: 'tuan',
-          timestamp: 123456
+          timestamp: c.unix()
         },
         mutation: gql`
           mutation addSchedule ($seatId: String!, $userId: String!, $timestamp: Int!) {
@@ -256,10 +302,22 @@ export const root = {
           }
         `
       }).then(function (result) {
-        // console.log(result)
-        let data = result.data.addSchedule
-        console.log(result.data.addSchedule)
-        dispatch.root.setColor({x: data.seat.x, y: data.seat.y}, '#e67e22')
+        // // console.log(result)
+        // let data = result.data.addSchedule
+        // // console.log(result.data.addSchedule)
+        // let time = moment(data.timestamp * 1000).format('DD-MM-YYYY|HH-mm').split('|')
+        // dispatch.root.setColor({x: data.seat.x, y: data.seat.y}, '#e67e22')
+        // dispatch.root.setTimestamp({x: data.seat.x, y: data.seat.y}, time[1])
+        // dispatch.root.setIdSchedule({x: data.seat.x, y: data.seat.y}, data._id)
+        try {
+          // console.log(result)
+          let data = result.data.addSchedule
+          // console.log(result.data.addSchedule)
+          let time = moment(data.timestamp * 1000).format('DD-MM-YYYY|HH-mm').split('|')
+          dispatch.root.setColor({x: data.seat.x, y: data.seat.y}, '#e67e22')
+          dispatch.root.setTimestamp({x: data.seat.x, y: data.seat.y}, time[1])
+          dispatch.root.setIdSchedule({x: data.seat.x, y: data.seat.y}, data._id)
+        } catch (e) {}
       })
     },
     async AsnycRoom (payload, rootState) {
@@ -283,13 +341,30 @@ export const root = {
       }).then(function (result) {
         let data = result.data.getSchedules
         for (let v of data) {
-          console.log(v)
-          if (v.room.name === rootState.root.pickroom) {
+          let time = moment(v.timestamp * 1000).format('DD-MM-YYYY|HH-mm').split('|')
+          if (v.room.name === rootState.root.pickroom && time[0] === rootState.root.pickdate) {
             let cc = [...rootState.root.map]
             cc[v.seat.x][v.seat.y].color = '#e67e22'
+            cc[v.seat.x][v.seat.y].timestamp = time[1]
+            cc[v.seat.x][v.seat.y].idschedule = v._id
             dispatch.root.handleChangeCustom('map', cc)
           }
         }
+      })
+    },
+    async AsyncRemoveSeat (payload, rootState) {
+      await hihi.Client.mutate({
+        variables: {
+          _id: payload
+        },
+        mutation: gql`
+          mutation deleteSchedule ($_id: ID!) {
+            deleteSchedule (_id: $_id) {
+              _id
+            }
+          }
+        `
+      }).then(function (result) {
       })
     }
   })
